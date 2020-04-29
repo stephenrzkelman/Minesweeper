@@ -1,5 +1,6 @@
 package board;
 import java.util.Random;
+import java.util.Scanner;
 public class Board {
 	public int[]bombs;
 	public Tile[] tiles;
@@ -50,12 +51,35 @@ public class Board {
 	@Override
 	public String toString() {
 		String printer = new String();
+		printer += "Game\t";
+		for(int i = 0;i<size;i++) {printer+=((i+1)+"\t");}
 		for(int i = 0; i<size; i++) {
+			printer+=(i*10+"\t");
 			for(int j= 0;j<size;j++) {
 				printer+= tiles[size*i+j].toString();
 			}
 			printer+="\n";
 		}
 		return printer;
+	}
+	
+	public static void Run(int boardSize) {
+		Board B = new Board(boardSize);
+		System.out.println(B);
+		int spot;
+		Scanner s = new Scanner(System.in);
+		while(!B.gameIsOver){
+			System.out.println("Enter an integer from 1 to"+ boardSize*boardSize+" to open a spot, and open a negative integer from -"+boardSize*boardSize+" to -1 to flag/unflag that spot");
+			spot = s.nextInt();
+			if(spot>0) {
+				B.tiles[spot-1].Open(B);
+			}
+			else {
+				B.tiles[-1-spot].flipFlag();
+			}
+			System.out.println(B);
+			B.checkGame();
+		}
+		s.close();
 	}
 }
