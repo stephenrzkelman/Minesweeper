@@ -42,7 +42,9 @@ public class Board {
 	}
 	public void checkGame() {
 		for(int i =0;i<size*size;i++) {
-			if(tiles[i].isBomb ^ (tiles[i].isFlag && !tiles[i].isOpen)) {return;}
+			if(///*digger mode:*/!(tiles[i].isBomb ^ tiles[i].isOpen)) 
+			/*flagger mode:*/ tiles[i].isBomb ^ (tiles[i].isFlag && !tiles[i].isOpen))
+			{return;}
 			}
 		gameIsOver = true;
 		System.out.println("YOU WIN!");
@@ -53,10 +55,25 @@ public class Board {
 		String printer = new String();
 		printer += "Game\t";
 		for(int i = 0;i<size;i++) {printer+=((i+1)+"\t");}
+		printer+="\n";
 		for(int i = 0; i<size; i++) {
-			printer+=(i*10+"\t");
+			printer+=(i*size+"\t");
 			for(int j= 0;j<size;j++) {
 				printer+= tiles[size*i+j].toString();
+			}
+			printer+="\n";
+		}
+		return printer;
+	}
+	public String help() {
+		String printer = new String();
+		printer += "Answer\t";
+		for(int i =0; i<size;i++) {printer+=((i+1)+"\t");}
+		printer += "\n";
+		for(int i = 0; i<size; i++) {
+			printer+=(i*size+"\t");
+			for(int j= 0;j<size;j++) {
+				printer+= tiles[size*i+j].print+"\t";
 			}
 			printer+="\n";
 		}
@@ -69,9 +86,12 @@ public class Board {
 		int spot;
 		Scanner s = new Scanner(System.in);
 		while(!B.gameIsOver){
-			System.out.println("Enter an integer from 1 to"+ boardSize*boardSize+" to open a spot, and open a negative integer from -"+boardSize*boardSize+" to -1 to flag/unflag that spot");
+			System.out.println("Enter an integer from 1 to "+ boardSize*boardSize+" to open a spot, or type a negative integer from -"+boardSize*boardSize+" to -1 to flag/unflag that spot");
 			spot = s.nextInt();
-			if(spot>0) {
+			if(spot ==0) {
+				System.out.println(B.help());
+			}
+			else if(spot>0) {
 				B.tiles[spot-1].Open(B);
 			}
 			else {
