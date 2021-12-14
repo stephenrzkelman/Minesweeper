@@ -3,7 +3,19 @@ This is a pretty elementary version of the Minesweeper game, complete with no GU
 I plan to come back to this sometime in the future to make it a little bit easier to play;
 but at the end of the day, it's still Minesweeper, and it's still a lot of fun!
 ## Table of Contents
-
+- [Usage](#usage)
+  - [The Board](#the-board)
+  - [Taking Your Turn](#taking-your-turn)
+  - [Taking Your Turn (Example)](#taking-your-turn-example)
+  - [Finishing the Game](#finishing-the-game)
+- [Implementation Notes](#implementation-notes)
+  - [Graph Functionality](#graph-functionality)
+  - [Modes](#modes)
+- [Improvements](#improvements)
+  - [Ease of Use](#ease-of-use)
+  - [Input Filtering](#input-filtering)
+  - [Hints and Help](#hints-and-help)
+  - [OOP Best Practices](#oop-best-practices)
 ## Usage
 The program runs out of the `Runner` file, which you can modify to change the size of the board. The number of bombs scales automatically with the board.
 
@@ -57,9 +69,9 @@ Enter an integer from 1 to 25 to open a spot, or type a negative integer from -2
 ```
 So, we can see that we have flagged spot 14, since it prints out an `F` in that spot.
 
+### Finishing the Game
 You can continue like this, step by step, until the game is over. As you may well know, the game either ends by you opening a spot that is a bomb (in which case you lose), or by you opening every spot that is not a bomb, and flagging every spot that is a bomb (in which case, you win).
 
-### Finishing the Game
 If you lose, the board will print out with all bombs revealed, including the one you just opened, and you will get a message that says "YOU LOSE!"
 
 If you win, the board will print out with all spots now opened or flagged, and then you will get a messsage that says "YOU WIN!"
