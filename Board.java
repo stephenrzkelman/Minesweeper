@@ -42,8 +42,8 @@ public class Board {
 	}
 	public void checkGame() {
 		for(int i =0;i<size*size;i++) {
-			if(///*digger mode:*/!(tiles[i].isBomb ^ tiles[i].isOpen)) 
-			/*flagger mode:*/ tiles[i].isBomb ^ (tiles[i].isFlag && !tiles[i].isOpen))
+			if(/*digger mode:*/!(tiles[i].isBomb ^ tiles[i].isOpen)) 
+			///*flagger mode:*/ tiles[i].isBomb ^ (tiles[i].isFlag && !tiles[i].isOpen))
 			{return;}
 			}
 		gameIsOver = true;
