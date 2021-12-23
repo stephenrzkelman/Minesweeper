@@ -1,4 +1,6 @@
+#include <ios>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <stdlib.h>
 #include <vector>
@@ -14,20 +16,21 @@ class Board
 	public:
 		Board(int size);
 		~Board();
-		int checkGame();
-		void print();
+		int checkGame(int gameState);
+		void print(int gameState);
 		/*int hint();*/
-		void Play();
+		void play();
 	private:
 		int m_size;
-		vector<vector<Tile*>> m_tiles;
+		std::vector<std::vector<Tile*>> m_tiles;
 		int m_unopened;
 		int m_bombs;
 		int m_flags;
 		/*int m_hints;*/
 
 		void openAll();
-}
+		bool validate(int row, int col, std::string action);
+};
 
 Board::Board(int size)
 {
@@ -35,7 +38,7 @@ Board::Board(int size)
 	m_size = size;
 	m_unopened = size*size;
 	// initialize board of nullptrs
-	vector<vector<int>> tiles(size, vector<int> (size, 0));
+	std::vector<std::vector<Tile*>> tiles(size, std::vector<Tile*> (size, 0));
 	
 	// create tiles, add neighbors
 	for(int r = 0; r < size; r++)
@@ -79,7 +82,7 @@ Board::Board(int size)
 		int nextBomb = rand() % (size*size);
 		// try to set as bomb
 		// if already a bomb, ignore
-		if(!tiles[nextBomb/size][nextBomb%size].setBomb())
+		if(!tiles[nextBomb/size][nextBomb%size]->setBomb())
 			continue;
 		// otherwise, decrement bombCount
 		else
@@ -106,35 +109,38 @@ int Board::checkGame(int gameState)
 {
 	if(gameState == GAME_OVER_LOSS) 
 		return GAME_OVER_LOSS;
-	if(m_unopened = m_bombs) 
+	if(m_unopened == m_bombs) 
 		return GAME_OVER_WIN;
 	else
 		return GAME_CONTINUE;
 }
 
-void Board::print()
+void Board::print(int gameState)
 {
-	cout<<"Board Size: "<<m_size<<" x "<<m_size<<"\t";
-	cout<<"Total Bombs: "<<m_bombs<<"\t";
-	cout<<"Remaining Flags: "<<m_flags<<endl;
+	std::cout<<"Board Size: "<<m_size<<" x "<<m_size<<"\t";
+	std::cout<<"Total Bombs: "<<m_bombs<<"\t";
+	std::cout<<"Remaining Flags: "<<m_flags<<std::endl;
 
-	cout<<"+\t";
+	std::cout<<"+\t";
 	for(int c = 0; c < m_size; c++)
 	{
-		cout << c << "\t";
+		std::cout << c << "\t";
 	}
-	cout << endl;
+	std::cout << std::endl;
 	for(int r = 0; r < m_size; r++)
 	{
-		cout << r << "\t";
+		std::cout << r << "\t";
 		for(int c = 0; c < m_size; c++)
 		{
-			cout << m_tiles[r][c].value() << "\t";
+			std::cout << m_tiles[r][c]->value() << "\t";
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
-	cout << "\n" <<endl;
-	cout << "Enter a row number (vertical along left), column number (horizontal across top), and action (open/flag/hint/soln); separated by spaces:" << endl;
+	if(gameState == GAME_CONTINUE)
+	{
+		std::cout << "\n" << std::endl;
+		std::cout << "Enter a row number (vertical along left), column number (horizontal across top), and action (open/flag/hint/soln); separated by spaces:" << std::endl;
+	}
 	return;
 }
 
@@ -154,13 +160,13 @@ void Board::openAll()
 	{
 		for(int c = 0; c < m_size; c++)
 		{
-			m_tiles[r][c].open();
+			m_tiles[r][c]->open();
 		}
 	}
 	return;
 }
 
-void Board::validate(row, col, action)
+bool Board::validate(int row, int col, std::string action)
 {
 	if(row >= 0 && row < m_size &&
 			col >= 0 && col < m_size &&
@@ -174,23 +180,24 @@ void Board::play()
 {
 	int gameState = 0;
 	int row, col;
-	string action;
+	std::string action;
 	do
 	{
 		this->print();
-		cin >> row >> col >> action;
-		cin.ignore(std::numeric_limits<std::streamsize>::max());
-		
+		std::cin >> row >> col >> action;
+		// std::cerr<<"input received"<<std::endl;
+		// std::cin.ignore(std::numeric_limits<std::streamsize>::max());	
 		while(!validate(row, col, action))
 		{
-			cout << "Invalid Input! Please enter a valid row number (1-" << m_size << "), column number (1-" << m_size << "), and action (open, flag, hint, soln)" << endl;
-			cin >> row >> col >> action;
-			cin.ignore(std::numeric_limits<std::streamsize>::max());
+			std::cout << "Invalid Input! Please enter a valid row number (0-" << m_size-1 << "), column number (0-" << m_size-1 << "), and action (open, flag, hint, soln)" << std::endl;
+			std::cin >> row >> col >> action;
+			//std::cin.ignore(std::numeric_limits<std::streamsize>::max());
 		}
+		// std::cerr<<"input valid"<<std::endl;
 		
 		if(action=="open")
 		{
-			int opened = m_tiles[row][col].open()<0;
+			int opened = m_tiles[row][col]->open();
 			if(opened < 0)
 				gameState = GAME_OVER_LOSS;
 			else
@@ -198,7 +205,7 @@ void Board::play()
 		}
 		else if(action=="flag")
 		{
-			m_flags -= m_tiles[row][col].flipFlag();
+			m_flags -= m_tiles[row][col]->flipFlag();
 		}
 		else if(action=="hint")
 		{
@@ -218,8 +225,8 @@ void Board::play()
 	this->print();
 	
 	if(gameState == GAME_OVER_LOSS)
-		cout<<"YOU LOSE"<<endl;
+		std::cout<<"YOU LOSE"<<std::endl;
 	else
-		cout<<"YOU WIN!"<<endl;
+		std::cout<<"YOU WIN!"<<std::endl;
 	return;
 }

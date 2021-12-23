@@ -11,7 +11,7 @@ class Tile
 		bool isOpen();
 		bool isFlag();
 
-		void assignNeighbor(int col, int row, Tile* neighbor);
+		int assignNeighbor(int col, int row, Tile* neighbor);
 		void assignBombCount();
 		char value();
 	private:
@@ -29,18 +29,19 @@ class Tile
 // return -1 if it is a bomb (game should end in a loss)
 // return 0 if not a bomb but already open
 // return n, the number of total tiles opened, otherwise
-void open()
+int Tile::open()
 {
-	// return -1 if it's a bomb
-	if(m_bomb)
-		return -1;
-
 	// don't do anything if it's already open or if it's flagged
 	if(m_open || m_flag) 
 		return 0;
 
 	// in any other case, first set its status to open
 	m_open = true;
+
+	// return -1 if it's a bomb
+	if(m_bomb)
+		return -1;
+
 	int opened = 1;
 
 	// if it's a blank square, open all of its neighbors (none of them will be bombs)
@@ -57,7 +58,7 @@ void open()
 
 // don't flag an open spot (return false)
 // otherwise, flag it and return true
-bool Flag::setFlag()
+bool Tile::setFlag()
 {
 	if(m_open)
 		return false;
@@ -70,7 +71,7 @@ bool Flag::setFlag()
 
 // don't unflag a non-flagged spot (return false)
 // otherwise, remove the flag and return true
-bool Flag::unSetFlag()
+bool Tile::unSetFlag()
 {
 	if(!m_flag)
 		return false;
@@ -128,7 +129,7 @@ bool Tile::isFlag()
 
 // assign a neighbor to a tile
 // col and row are ints -1 to 1 indicating where the neighbor is relative to the tile
-int assignNeighbor(int row, int col, Tile* neighbor)
+int Tile::assignNeighbor(int row, int col, Tile* neighbor)
 {
 	// if not valid coords, return -1
 	if(col<-1 || col>1 || row<-1 || row>1 || (row==0 && col==0))
