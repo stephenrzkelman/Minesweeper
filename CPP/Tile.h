@@ -3,14 +3,17 @@ class Tile
 	public:
 		// use default constructor/destructor
 		// all members are static & have default values
-		void Open();
+		int Open();
 		bool FlipFlag();
 		bool setBomb();
+		// NOTE: don't think I will be needing these next 3
 		bool isBomb();
 		bool isOpen();
 		bool isFlag();
+
 		void assignNeighbor(int col, int row, Tile* neighbor);
 		void assignBombCount();
+		char value();
 	private:
 		bool m_bomb = false;
 		bool m_open = false;
@@ -20,16 +23,22 @@ class Tile
 };
 
 // open a tile
+// return -1 if it is a bomb (game should end in a loss)
+// return 0 otherwise (game should continue)
 void Open()
 {
+	// return -1 if it's a bomb
+	if(m_bomb)
+		return -1;
+
 	// don't do anything if it's already open
 	if(m_open) 
-		return;
+		return 0;
 
-	// set its status to open
+	// in any other case, first set its status to open
 	m_open = true;
 
-	// if it's a blank square, open all of its neighbors
+	// if it's a blank square, open all of its neighbors (none of them will be bombs)
 	if(m_neighborBombs == 0)
 	{
 		for(int i = 0; i < 8; i++)
@@ -38,7 +47,7 @@ void Open()
 				m_neighbors[i]->Open();
 		}
 	}
-	return;
+	return 0;
 }
 
 // flip flag status of a tile
@@ -104,4 +113,22 @@ int assignNeighbor(int row, int col, Tile* neighbor)
 		m_neighbors[index] = neighbor;
 		return 0;
 	}
+}
+
+// return value to be printed out
+char Tile::value()
+{
+	if(m_flag)
+		return 'F';
+	else if(!m_open)
+		return '.';
+	else if(!m_bomb)
+	{
+		if(m_neighborBombs == 0)
+			return '_';
+		else
+			return '0'+m_neighborBombs;
+	}
+	else
+		return 'B';
 }
