@@ -3,8 +3,8 @@ class Tile
 	public:
 		// use default constructor/destructor
 		// all members are static & have default values
-		int Open();
-		bool flipFlag();
+		int open();
+		int flipFlag();
 		bool setBomb();
 		// NOTE: don't think I will be needing these next 3
 		bool isBomb();
@@ -29,7 +29,7 @@ class Tile
 // return -1 if it is a bomb (game should end in a loss)
 // return 0 if not a bomb but already open
 // return n, the number of total tiles opened, otherwise
-void Open()
+void open()
 {
 	// return -1 if it's a bomb
 	if(m_bomb)
@@ -49,7 +49,7 @@ void Open()
 		for(int i = 0; i < 8; i++)
 		{
 			if (m_neighbors[i] != nullptr)
-				opened += m_neighbors[i]->Open();
+				opened += m_neighbors[i]->open();
 		}
 	}
 	return opened;
@@ -82,11 +82,11 @@ bool Flag::unSetFlag()
 }
 
 // do the proper flag/unflag action
-// return true if successful, false otherwise
-bool Tile::flipFlag()
+// return number of additional flags being used after flip
+int Tile::flipFlag()
 {
-	if(m_flag) return unSetFlag();
-	else return setFlag();
+	if(m_flag) return unSetFlag() ? -1 : 0;
+	else return setFlag() ? 1 : 0;
 }
 
 // set a tile to be a bomb
