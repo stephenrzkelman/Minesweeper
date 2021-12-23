@@ -76,11 +76,11 @@ Board::Board(int size)
 	m_bombs = bombCount;
 	m_flags = m_bombs;
 
+	std::srand(std::time(nullptr));
 	// place bombCount distinct bombs
 	while(bombCount > 0)
 	{
 		// pick random spot on board
-		std::srand(std::time(nullptr));
 		int nextBomb = std::rand() % (size*size);
 		// try to set as bomb
 		// if already a bomb, ignore

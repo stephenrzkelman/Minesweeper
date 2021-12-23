@@ -1,3 +1,15 @@
 faster random library
 remove all flags when opening all
 possibly print twice on game end-- final state, and then solution
+	maybe different type of 2nd print for win (different bomb texture?)
+clear output each time
+make it easier to read
+	spaces instead of tabs
+	separate row/column labels from grid
+	add row/column labels on top & right
+
+
+long-term:
+figure out hints
+fix/figure out better bomb ratio
+guarantee good first open (no bombs neighboring)
