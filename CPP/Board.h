@@ -114,7 +114,28 @@ int Board::checkGame(int gameState)
 
 void Board::print()
 {
-	// TODO: print out board directly using cout;
+	cout<<"Board Size: "<<m_size<<" x "<<m_size<<"\t";
+	cout<<"Total Bombs: "<<m_bombs<<"\t";
+	cout<<"Remaining Flags: "<<m_flags<<endl;
+
+	cout<<"+\t";
+	for(int c = 0; c < m_size; c++)
+	{
+		cout << c << "\t";
+	}
+	cout << endl;
+	for(int r = 0; r < m_size; r++)
+	{
+		cout << r << "\t";
+		for(int c = 0; c < m_size; c++)
+		{
+			cout << m_tiles[r][c].value() << "\t";
+		}
+		cout << endl;
+	}
+	cout << "\n" <<endl;
+	cout << "Enter a row number (vertical along left), column number (horizontal across top), and action (open/flag/hint/soln); separated by spaces:" << endl;
+	return;
 }
 
 /*
@@ -158,13 +179,13 @@ void Board::play()
 	{
 		this->print();
 		cin >> row >> col >> action;
-		// TODO: flush stdin
+		cin.ignore(std::numeric_limits<std::streamsize>::max());
 		
 		while(!validate(row, col, action))
 		{
 			cout << "Invalid Input! Please enter a valid row number (1-" << m_size << "), column number (1-" << m_size << "), and action (open, flag, hint, soln)" << endl;
 			cin >> row >> col >> action;
-			// TODO: flush stdin
+			cin.ignore(std::numeric_limits<std::streamsize>::max());
 		}
 		
 		if(action=="open")
@@ -181,7 +202,7 @@ void Board::play()
 		}
 		else if(action=="hint")
 		{
-			this->hint();
+			/* this->hint(); */
 		}
 		else if(action=="soln")
 		{
