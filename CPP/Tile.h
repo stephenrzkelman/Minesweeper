@@ -4,7 +4,7 @@ class Tile
 		// use default constructor/destructor
 		// all members are static & have default values
 		int Open();
-		bool FlipFlag();
+		bool flipFlag();
 		bool setBomb();
 		// NOTE: don't think I will be needing these next 3
 		bool isBomb();
@@ -20,23 +20,28 @@ class Tile
 		bool m_flag = false;
 		Tile* m_neighbors[8] = {0};
 		int m_neighborBombs = 0;
+
+		bool setFlag();
+		bool unSetFlag();
 };
 
 // open a tile
 // return -1 if it is a bomb (game should end in a loss)
-// return 0 otherwise (game should continue)
+// return 0 if not a bomb but already open
+// return n, the number of total tiles opened, otherwise
 void Open()
 {
 	// return -1 if it's a bomb
 	if(m_bomb)
 		return -1;
 
-	// don't do anything if it's already open
-	if(m_open) 
+	// don't do anything if it's already open or if it's flagged
+	if(m_open || m_flag) 
 		return 0;
 
 	// in any other case, first set its status to open
 	m_open = true;
+	int opened = 1;
 
 	// if it's a blank square, open all of its neighbors (none of them will be bombs)
 	if(m_neighborBombs == 0)
@@ -44,18 +49,44 @@ void Open()
 		for(int i = 0; i < 8; i++)
 		{
 			if (m_neighbors[i] != nullptr)
-				m_neighbors[i]->Open();
+				opened += m_neighbors[i]->Open();
 		}
 	}
-	return 0;
+	return opened;
 }
 
-// flip flag status of a tile
-// return final flag status of the tile
-bool Tile::FlipFlag()
+// don't flag an open spot (return false)
+// otherwise, flag it and return true
+bool Flag::setFlag()
 {
-	m_flag = !m_flag;
-	return m_flag;
+	if(m_open)
+		return false;
+	else
+	{
+		m_flag = true;
+		return true;
+	}
+}
+
+// don't unflag a non-flagged spot (return false)
+// otherwise, remove the flag and return true
+bool Flag::unSetFlag()
+{
+	if(!m_flag)
+		return false;
+	else
+	{
+		m_flag = false;
+		return true;
+	}
+}
+
+// do the proper flag/unflag action
+// return true if successful, false otherwise
+bool Tile::flipFlag()
+{
+	if(m_flag) return unSetFlag();
+	else return setFlag();
 }
 
 // set a tile to be a bomb

@@ -5,26 +5,33 @@
 
 #include "Tile.h"
 
+#define GAME_CONTINUE   0
+#define GAME_OVER_WIN   1
+#define GAME_OVER_LOSS -1
+
 class Board
 {
 	public:
 		Board(int size);
 		~Board();
 		int checkGame();
-		string print();
-		string hint();
-		string soln();
+		void print();
+		int hint();
+		int soln();
 		void Play();
 	private:
 		int m_size;
 		vector<vector<Tile*>> m_tiles;
+		int m_unopened;
+		int m_bombs;
+		// TODO: keep track of number of hints issued
 }
 
 Board::Board(int size)
 {
 	// set size as given
 	m_size = size;
-	
+	m_unopened = size*size;
 	// initialize board of nullptrs
 	vector<vector<int>> tiles(size, vector<int> (size, 0));
 	
@@ -60,6 +67,7 @@ Board::Board(int size)
 
 	// prepare to place bombs
 	int bombCount = size*6/5;
+	m_bombs = bombCount;
 
 	// place bombCount distinct bombs
 	while(bombCount > 0)
@@ -92,46 +100,37 @@ Board::~Board()
 }
 
 // TODO: add some member variable(s) to make this constant time
-// TODO: honestly, with the whole gameState handling, I don't think we need this.
-int Board::checkGame()
+// TODO: note! we win the game if and only if the only unopened squares are bombs
+// and, if we have opened a bomb before, then the game will have already ended
+// so while the game has not ended, if the number of unopened squares is the number of bombs,
+// then we have won
+int Board::checkGame(int gameState)
 {
-	for(int r = 0; r < m_size; r++)
-	{
-		for(int c = 0; c < m_size; c++)
-		{
-			// TODO: for readability, add unfinished() member function to Tile to use for this check
-			if(!(m_tiles[r][c].isBomb() ^ m_tiles[r][c].isOpen()))
-			{
-				return 0;
-				// indicates that the game should continue
-			}
-		}
-	}
-	return 1;
-	// indicates that the game has been won and is over
+	if(gameState == GAME_OVER_LOSS) 
+		return GAME_OVER_LOSS;
+	if(/* number of unopened tiles == number of bombs */) 
+		return GAME_OVER_WIN;
+	else
+		return GAME_CONTINUE;
 }
 
-string Board::print()
+void Board::print()
 {
-	string board = "";
-	// TODO: use string to make board printout work
-	// likely just converting this to directly using cout
-	return board;
+	// TODO: print out board directly using cout;
 }
 
-string Board::hint()
+int Board::hint()
 {
 	// TODO: print out state of random (incomplete) tile
-	// use unfinished() member function to implement
-	// likely just converting this to directly using cout
+	// TODO: use cout directly
+	// TODO: wait for confirmation from user before returning [use getch() from conio.h]
+	return GAME_CONTINUE;
 }
 
-string Board::soln()
+int Board::soln()
 {
-	// TODO: print out solution (full board revealed)
-	// note: game must end anytime this is called
-	// likely just converting this to directly using cout
-	// in particular, it will allow this one to return -1 and forcibly end the game with a loss
+	// TODO: open all unopened spots on the board
+	return GAME_OVER_LOSS;
 }
 
 void Board::play()
@@ -142,21 +141,27 @@ void Board::play()
 	do
 	{
 		this->print();
-		cin>>row>>col>>action;
+		cin >> row >> col >> action;
+		// TODO: flush stdin
 		// TODO: validate() helper function
 		while(!validate(row, col, action))
 		{
-			cout<<"Invalid Input! Please enter a valid row number (1-"<<m_size<<"), column number (1-"<<m_size<<"), and action (open, flag, hint, soln)"<<endl;
+			cout << "Invalid Input! Please enter a valid row number (1-" << m_size << "), column number (1-" << m_size << "), and action (open, flag, hint, soln)" << endl;
+			cin >> row >> col >> action;
+			// TODO: flush stdin
 		}
-		// handle action open
-		// handle action flag
-		// handle action hint
-		// handle action soln
-		// flush stdout
+		// TODO: handle action flag
+		// TODO: handle action hint
+		// TODO: handle action soln
+		// TODO: flush stdout
+		// TODO: update gameState by checking game
 	}
-	while(gameState == 0);
-	
-	// print out board one last time
-	// print out relevant end-of-game message
+	while(gameState == GAME_CONTINUE);
+	// TODO: open all unopened tiles
+	// TODO: print out board one last time
+	if(gameState == GAME_OVER_LOSS)
+		cout<<"YOU LOSE"<<endl;
+	else
+		cout<<"YOU WIN!"<<endl;
 	return;
 }
