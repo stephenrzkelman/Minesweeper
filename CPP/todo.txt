@@ -1,0 +1,3 @@
+faster random library
+remove all flags when opening all
+possibly print twice on game end-- final state, and then solution

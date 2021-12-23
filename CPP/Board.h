@@ -1,8 +1,9 @@
+#include <cstdlib>
+#include <ctime>
 #include <ios>
 #include <iostream>
 #include <limits>
 #include <string>
-#include <stdlib.h>
 #include <vector>
 
 #include "Tile.h"
@@ -79,7 +80,8 @@ Board::Board(int size)
 	while(bombCount > 0)
 	{
 		// pick random spot on board
-		int nextBomb = rand() % (size*size);
+		std::srand(std::time(nullptr));
+		int nextBomb = std::rand() % (size*size);
 		// try to set as bomb
 		// if already a bomb, ignore
 		if(!tiles[nextBomb/size][nextBomb%size]->setBomb())
@@ -183,7 +185,7 @@ void Board::play()
 	std::string action;
 	do
 	{
-		this->print();
+		this->print(gameState);
 		std::cin >> row >> col >> action;
 		// std::cerr<<"input received"<<std::endl;
 		// std::cin.ignore(std::numeric_limits<std::streamsize>::max());	
@@ -222,7 +224,7 @@ void Board::play()
 	while(gameState == GAME_CONTINUE);
 	
 	this->openAll();
-	this->print();
+	this->print(gameState);
 	
 	if(gameState == GAME_OVER_LOSS)
 		std::cout<<"YOU LOSE"<<std::endl;
